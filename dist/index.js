@@ -88,17 +88,16 @@ io.on('connection', (socket) => {
         const room = rooms.get(data.roomId);
         if (!room)
             return;
-        // Update canvas state with conflict resolution
-        if (data.timestamp > room.lastUpdate) {
-            room.canvasState = data.elements;
-            room.lastUpdate = data.timestamp;
-            // Broadcast to other users in room
-            socket.to(data.roomId).emit('canvas_updated', {
-                elements: data.elements,
-                userId: socket.id,
-                timestamp: data.timestamp
-            });
-        }
+        // FIXED: Always update canvas state for real-time collaboration
+        room.canvasState = data.elements;
+        room.lastUpdate = data.timestamp;
+        console.log(`Canvas updated in room ${data.roomId}: ${data.elements.length} elements`);
+        // Broadcast to other users in room immediately
+        socket.to(data.roomId).emit('canvas_updated', {
+            elements: data.elements,
+            userId: socket.id,
+            timestamp: data.timestamp
+        });
     });
     socket.on('cursor_move', (data) => {
         const room = rooms.get(data.roomId);
@@ -107,6 +106,7 @@ io.on('connection', (socket) => {
         const user = room.users.get(socket.id);
         if (user) {
             user.cursor = { x: data.x, y: data.y };
+            // Broadcast cursor position immediately
             socket.to(data.roomId).emit('cursor_updated', {
                 userId: socket.id,
                 cursor: user.cursor,
