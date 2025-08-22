@@ -212,8 +212,12 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+
+// Ensure PORT is a number
+const portNumber = typeof PORT === 'string' ? parseInt(PORT, 10) : PORT;
+
+server.listen(portNumber, '0.0.0.0', () => {
+    console.log(`Server running on port ${portNumber}`);
 });
 
 export default app;
