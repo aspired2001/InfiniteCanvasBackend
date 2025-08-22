@@ -9,6 +9,10 @@
         "outDir": "dist"
     },
     "include": [
-        "*.ts"
-    ] // looks for .ts files in root
+        "index.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
 }
